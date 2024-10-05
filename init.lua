@@ -148,10 +148,14 @@ vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Sets default identation
--- vim.opt.tabstop = 2
--- vim.opt.expandtab = true
--- vim.opt.shiftwidth = 2
--- vim.opt.softtabstop = 2
+vim.opt.tabstop = 2
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
+
+vim.opt.textwidth = 80
+vim.opt.colorcolumn = '+2'
+vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#000000' })
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -328,6 +332,9 @@ require('lazy').setup({
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
+  },
+  {
+    'rhysd/conflict-marker.vim',
   },
 
   -- NOTE: Plugins can specify dependencies.
@@ -644,6 +651,8 @@ require('lazy').setup({
         end,
       })
 
+      local util = require 'lspconfig.util'
+
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
@@ -673,6 +682,24 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        --
+        biome = {
+          cmd = { 'biome', 'lsp-proxy' },
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'json',
+            'jsonc',
+            'typescript',
+            'typescript.tsx',
+            'typescriptreact',
+            'astro',
+            'svelte',
+            'vue',
+            'css',
+          },
+          root_dir = util.root_pattern 'biome.json',
+        },
 
         lua_ls = {
           -- cmd = {...},
@@ -703,6 +730,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'biome',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
