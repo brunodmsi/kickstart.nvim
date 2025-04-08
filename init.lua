@@ -537,6 +537,7 @@ require('lazy').setup({
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'bmatcuk/stylelint-lsp',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -749,6 +750,26 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      local stylelint_root_file = {
+        '.stylelintrc',
+        '.stylelintrc.cjs',
+        '.stylelintrc.js',
+        '.stylelintrc.json',
+        '.stylelintrc.yaml',
+        '.stylelintrc.yml',
+        'stylelint.config.cjs',
+        'stylelint.config.js',
+      }
+
+      stylelint_root_file = util.insert_package_json(stylelint_root_file, 'stylelint')
+
+      require('lspconfig').stylelint_lsp.setup {
+        cmd = { 'stylelint-lsp', '--stdio' },
+        filetypes = { 'css', 'scss' },
+        root_dir = util.root_pattern(unpack(stylelint_root_file)),
+        settings = {},
+      }
+
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
@@ -810,6 +831,12 @@ require('lazy').setup({
         typescriptreact = { { 'prettierd', 'prettier' } },
       },
     },
+  },
+
+  {
+    'folke/ts-comments.nvim',
+    opts = {},
+    event = 'VeryLazy',
   },
 
   { -- Autocompletion
