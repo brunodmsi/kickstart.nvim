@@ -92,6 +92,11 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
+vim.g.forestbones = {
+  darkness = 'warm',
+  transparent_background = 'true',
+}
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -153,9 +158,10 @@ vim.opt.expandtab = true
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 
-vim.opt.textwidth = 80
-vim.opt.colorcolumn = '+2'
-vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#000000' })
+vim.opt.signcolumn = 'yes'
+vim.opt.colorcolumn = '80'
+
+vim.opt.termguicolors = true
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -955,24 +961,6 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
-    end,
-  },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -1046,6 +1034,36 @@ require('lazy').setup({
       require('cit-vim-flow-copilot').setup {}
     end,
     lazy = false,
+  },
+  {
+    'm4xshen/smartcolumn.nvim',
+    opts = {},
+  },
+
+  {
+    'olivercederborg/poimandres.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      local p = require 'poimandres.palette'
+      require('poimandres').setup {
+        bold_vert_split = false, -- use bold vertical separators
+        dim_nc_background = true, -- dim 'non-current' window backgrounds
+        disable_background = true, -- disable background
+        disable_float_background = false, -- disable background for floats
+        disable_italics = false, -- disable italics
+        highlight_groups = {
+          LspReferenceText = { bg = p.background1 },
+          LspReferenceRead = { bg = p.background1 },
+          LspReferenceWrite = { bg = p.background1 },
+        },
+      }
+    end,
+
+    -- optionally set the colorscheme within lazy config
+    init = function()
+      vim.cmd 'colorscheme poimandres'
+    end,
   },
 
   {
